@@ -49,7 +49,11 @@ module.exports.routes = {
   'post /register': 'UserController.register',
 
   // PostController
-  'post /posts': 'PostController.createPost'
+  'post /posts': 'PostController.createPost',
+  'put /posts/:postId': 'PostController.updatePost',
+  'delete /posts/:postId': 'PostController.deletePost',
+  'get /posts/timeline': 'PostController.getTimelinePosts',
+  'get /posts/feed': 'PostController.getFeedPosts'
   //  ╦ ╦╔═╗╔╗ ╦ ╦╔═╗╔═╗╦╔═╔═╗
   //  ║║║║╣ ╠╩╗╠═╣║ ║║ ║╠╩╗╚═╗
   //  ╚╩╝╚═╝╚═╝╩ ╩╚═╝╚═╝╩ ╩╚═╝

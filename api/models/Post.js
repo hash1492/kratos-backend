@@ -20,6 +20,9 @@ module.exports = {
     userId: {
       model: 'user'
     },
+    receiverUserId: {
+      model: 'user'
+    },
     photo: {
       type: 'string',
       required: false,
