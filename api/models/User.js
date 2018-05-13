@@ -28,7 +28,8 @@ module.exports = {
     },
     birthDate: {
       type: 'string',
-      required: false
+      required: false,
+      defaultsTo: '1000-01-01'
     },
     bio: {
       type: 'string',
@@ -54,10 +55,6 @@ module.exports = {
       type: 'string',
       required: false
     },
-    dateJoined: {
-      type: 'string',
-      required: false
-    },
     active: {
       type: 'boolean',
       required: false
@@ -71,6 +68,7 @@ module.exports = {
     values.id = uuid.v4();
     values.createdAt = new Date();
     values.updatedAt = new Date();
+    values.dateJoined = new Date();
     cb();
   },
   beforeUpdate: function (values, cb) {
