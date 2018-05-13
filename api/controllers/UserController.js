@@ -62,6 +62,11 @@ module.exports = {
               const responseObj = {
                 id: response.id              
               };
+              let emailObj = {
+                name: user.firstName,
+                email: user.email
+              }
+              EmailService.sendWelcomeEmail(emailObj);
               res.send(responseObj);
             })
             .catch(function (err) {
@@ -85,9 +90,13 @@ module.exports = {
     .then(function (response) {
       // user exists, send verfication code
       if(response) {
-        let verificationCode = uuid.v4();
-        console.log("verification code = " + verificationCode);
-        // TODO Send an email to this user with a verification code
+        let verificationCode = uuid.v4().substr(0,4);
+        // Send an email to this user with a verification code
+        let emailObj = {
+          email: user.email,
+          verificationCode: verificationCode
+        };
+        EmailService.sendVerifcationCodeEmail(emailObj);
         let responseObj = {
           message: 'Verification code sent'
         };
