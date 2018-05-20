@@ -1,5 +1,4 @@
 const sgMail = require('@sendgrid/mail');
-console.log(sails.config.sendgridApiKey);
 
 sgMail.setApiKey(sails.config.sendgridApiKey);
 

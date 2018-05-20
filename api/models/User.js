@@ -62,6 +62,10 @@ module.exports = {
     posts: {
       collection: 'post',
       via: 'userId'
+    },
+    verficationCodes: {
+      collection: 'verificationCode',
+      via: 'userId'
     }
   },
   beforeCreate: function (values, cb) {
