@@ -18,5 +18,20 @@ module.exports.policies = {
   ***************************************************************************/
 
   // '*': true,
+  PostController: {
+    '*': 'isAuthenticated'
+  },
+
+  FriendRequestController: {
+    '*': 'isAuthenticated'
+  },
+
+  FriendController: {
+    '*': 'isAuthenticated'
+  },
+
+  UserController: {
+    'search': 'isAuthenticated'
+  }
 
 };
