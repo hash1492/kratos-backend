@@ -66,7 +66,11 @@ module.exports = {
     verficationCodes: {
       collection: 'verificationCode',
       via: 'userId'
-    }
+    },
+    friends: {
+      collection: 'friend',
+      via: 'userId1'
+    },
   },
   beforeCreate: function (values, cb) {
     values.id = uuid.v4();

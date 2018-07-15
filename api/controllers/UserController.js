@@ -8,6 +8,7 @@ let jwt = require('jsonwebtoken');
 let bcrypt = require('bcrypt');
 let uuid = require('node-uuid');
 var verificationCodeController = require('./VerificationCodeController');
+var friendController = require('./FriendController');
 
 module.exports = {
 	login: function (req, res) {
@@ -105,8 +106,6 @@ module.exports = {
   },
   forgotPassword: function (req, res) {
     let user = req.body;
-
-    console.log(user);
     // Check if user exists
     User.findOne({email: user.email})
     .then(function (response) {
@@ -148,7 +147,6 @@ module.exports = {
   },
   verifyUser: function (req, res) {
     let user = req.body;
-    console.log('verifyUser called');
     
     User.findOne({email: user.email})
     .then(function (userObj) {
@@ -215,5 +213,69 @@ module.exports = {
           })
       });
     });
+  },
+  search: function (req, res) {
+    let searchObj = req.body;
+
+    User.find({
+      or: [
+        {
+          firstName: {
+            contains: searchObj.text
+          } 
+        },
+        {
+          lastName: {
+            contains: searchObj.text
+          } 
+        },
+        { 
+          email: {
+            contains: searchObj.text
+          }
+        }
+      ]
+    })
+    .populate('friends')
+    .then(function (users) {
+      if(!users || !users.length) {
+        return res.serverError({
+          errorCode: 'NO_USERS_FOUND',
+          message: 'No user was found matching this name',
+        });
+      }
+      let promises = [];
+      users.forEach(user => {
+        if(user.id === req.userId) {
+          user.isMyProfile = true
+        }
+        promises.push(friendController.isUserMyFriend(user, req.userId))
+      })
+
+      Promise.all(promises)
+      .then(function(responses) {
+        for (let i = 0; i < users.length; i++) {
+          const user = users[i];
+          for (let j = 0; j < responses.length; j++) {
+            const response = responses[j];
+            if(i === j ) { 
+              user.isFriend = response;
+            }
+          }
+        }
+        res.send(users);
+      })
+      .catch(function (err) {
+        console.log(err);
+      })
+    })
+    .catch(function (err) {
+      console.log(err)
+      return res.serverError({
+        errorCode: 'NO_USERS_FOUND',
+        message: 'No user was found matching this name',
+        err: err
+      });
+    })
   }
 };

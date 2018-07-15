@@ -32,7 +32,7 @@ module.exports = {
         this.sendEmail(msg);     
     },
     sendEmail: function(msg) {
-        const emailsEnabled = true;
+        const emailsEnabled = false;
         if(emailsEnabled) {
             sgMail.send(msg);
         }
