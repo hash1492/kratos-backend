@@ -46,7 +46,7 @@ module.exports = {
     })
   },
   getTimelinePosts: function(req, res) {
-    const userId = req.params;
+    const userId = req.userId;
     const pagination = req.query;
 
     pagination.limit = pagination.limit || 10;
@@ -56,10 +56,9 @@ module.exports = {
       or : [
         { userId: userId },
         { receiverUserId: userId }
-      ],
-      limit: pagination.limit, skip: pagination.skip
+      ]
     })
-    .sort('updatedAt DESC')
+    .populate('userId')
     .then(function (response) {
       res.send(response);
     })
@@ -69,14 +68,13 @@ module.exports = {
     })
   },
   getFeedPosts: function(req, res) {
-    const userId = req.params;
-    const pagination = req.query;
-
+    const userId = req.userId;
+    const pagination = req.query;    
+    
     pagination.limit = pagination.limit || 10;
     pagination.skip = pagination.skip || 0;
-
     // get list of friends of current user
-    Friends.find({
+    Friend.find({
       or : [
         { userId1: userId },
         { userId2: userId }
@@ -90,24 +88,29 @@ module.exports = {
         return friend.userId1;
       })
 
-
-      const posts = [];
+      
+      let allPosts = [];
+      const promises = [];
       friendsIds.forEach(friendId => {
-        Post.find({
+        let promise = Post.find({
           or : [
-            { userId: userId },
-            { receiverUserId: userId }
+            { userId: friendId },
+            { receiverUserId: friendId }
           ]
-        })
-        .then(function (response) {
-          posts.push(response);
-          // res.send(response);
-        })
-        .catch(function (err) {
-          console.log(err)
-          res.send(err)
-        })
+        }).populate('userId')
+
+        promises.push(promise);
       })
+
+      Promise.all(promises)
+      .then(responses => {
+        responses.forEach(response => {
+          response.forEach(post => {
+            allPosts.push(post);
+          })
+        });
+        res.send(allPosts);
+      });
     })
     .catch(function (err) {
       console.log(err)
